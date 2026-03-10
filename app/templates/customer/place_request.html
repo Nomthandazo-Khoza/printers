@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}Place Request - City Printers{% endblock %}
+{% block sidebar %}
+{% if session.get('customer_portal') %}
+{% include 'customer/_sidebar.html' %}
+{% endif %}
+{% endblock %}
+{% block content %}
+<h2 class="mb-4">Place Service Request</h2>
+<div class="card">
+    <div class="card-body">
+        <p class="mb-0">To place a printing service request (e.g. printing, photocopying, scanning, laminating, binding), please visit our shop or contact us. Staff will create your order and you can track it under <strong>My Orders</strong> and collect your receipt once payment is complete.</p>
+    </div>
+</div>
+{% endblock %}

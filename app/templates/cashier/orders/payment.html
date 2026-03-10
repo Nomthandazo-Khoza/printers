@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Record Payment - Order #{{ order.id }} - City Printers CRM{% endblock %}
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('cashier.order_list') }}">Orders</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('cashier.order_detail', order_id=order.id) }}">Order #{{ order.id }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Record Payment</li>
+    </ol>
+</nav>
+
+<h2 class="mb-4">Record Payment — Order #{{ order.id }}</h2>
+
+<div class="card mb-4">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">Order Summary</h5>
+    </div>
+    <div class="card-body">
+        <p class="mb-1"><strong>Customer:</strong> {{ order.customer.full_name }}</p>
+        <p class="mb-1"><strong>Order total:</strong> R {{ "%.2f"|format(order.total_amount|float) }}</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <p class="text-muted small">Full payment only. Amount must equal order total.</p>
+        <form method="post" action="{{ url_for('cashier.order_payment', order_id=order.id) }}" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="row g-3">
+                <div class="col-md-6">
+                    {{ form.payment_method.label(class="form-label") }}
+                    {{ form.payment_method(class="form-select") }}
+                    {% if form.payment_method.errors %}
+                        <div class="invalid-feedback d-block">{{ form.payment_method.errors[0] }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    {{ form.amount_paid.label(class="form-label") }}
+                    {{ form.amount_paid(class="form-control", readonly="readonly") }}
+                    {% if form.amount_paid.errors %}
+                        <div class="invalid-feedback d-block">{{ form.amount_paid.errors[0] }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-12">
+                    {{ form.submit(class="btn btn-primary") }}
+                    <a href="{{ url_for('cashier.order_detail', order_id=order.id) }}" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

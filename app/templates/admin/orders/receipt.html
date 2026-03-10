@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Receipt {{ receipt.receipt_number }} - Admin - City Printers CRM{% endblock %}
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('admin.order_list') }}">Orders</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('admin.order_detail', order_id=order.id) }}">Order #{{ order.id }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Receipt</li>
+    </ol>
+</nav>
+
+<div class="card receipt-print mb-4" id="receipt">
+    <div class="card-body p-4">
+        <h3 class="text-center mb-1">City Printers</h3>
+        <p class="text-center text-muted small mb-4">Printing Services</p>
+
+        <table class="table table-borderless table-sm mb-0 w-100">
+            <tr><th class="text-muted" style="width: 40%;">Receipt Number</th><td>{{ receipt.receipt_number }}</td></tr>
+            <tr><th class="text-muted">Payment Date</th><td>{{ payment.payment_date.strftime('%Y-%m-%d %H:%M') }}</td></tr>
+            <tr><th class="text-muted">Order Number</th><td>{{ order.id }}</td></tr>
+            <tr><th class="text-muted">Customer</th><td>{{ order.customer.full_name }}</td></tr>
+            <tr><th class="text-muted">Cashier</th><td>{{ order.payment.recorded_by_user.full_name if order.payment.recorded_by_user else '-' }}</td></tr>
+        </table>
+
+        <hr class="my-4">
+
+        <table class="table table-sm mb-0">
+            <thead>
+                <tr>
+                    <th>Service</th>
+                    <th class="text-center">Qty</th>
+                    <th class="text-end">Unit Price</th>
+                    <th class="text-end">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.items %}
+                <tr>
+                    <td>{{ item.service.service_name }}</td>
+                    <td class="text-center">{{ item.quantity }}</td>
+                    <td class="text-end">R {{ "%.2f"|format(item.unit_price|float) }}</td>
+                    <td class="text-end">R {{ "%.2f"|format(item.subtotal|float) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <hr class="my-3">
+        <div class="d-flex justify-content-end">
+            <table class="table table-sm table-borderless w-auto">
+                <tr><th class="text-end pe-3">Total Amount Paid</th><td class="text-end fw-bold">R {{ "%.2f"|format(payment.amount_paid|float) }}</td></tr>
+                <tr><th class="text-end pe-3">Payment Method</th><td class="text-end">{{ payment.payment_method or '-' }}</td></tr>
+            </table>
+        </div>
+
+        <p class="text-center text-muted mt-4 mb-0">Thank you for your business.</p>
+    </div>
+</div>
+
+<div class="d-print-none">
+    <button type="button" class="btn btn-outline-primary" onclick="window.print();">
+        <i class="bi bi-printer me-1"></i> Print
+    </button>
+    <a href="{{ url_for('admin.order_detail', order_id=order.id) }}" class="btn btn-outline-secondary">Back to Order</a>
+</div>
+{% endblock %}

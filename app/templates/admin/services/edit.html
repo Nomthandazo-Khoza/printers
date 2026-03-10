@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Edit {{ service.service_name }} - Admin - City Printers CRM{% endblock %}
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('admin.service_list') }}">Services</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Edit</li>
+    </ol>
+</nav>
+
+<h2 class="mb-4">Edit Service</h2>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post" action="{{ url_for('admin.service_edit', service_id=service.id) }}" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="row g-3">
+                <div class="col-12">
+                    {{ form.service_name.label(class="form-label") }}
+                    {{ form.service_name(class="form-control", placeholder="Service name") }}
+                    {% if form.service_name.errors %}
+                        <div class="invalid-feedback d-block">{{ form.service_name.errors[0] }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-12">
+                    {{ form.description.label(class="form-label") }}
+                    {{ form.description(class="form-control", rows=2, placeholder="Optional description") }}
+                </div>
+                <div class="col-md-6">
+                    {{ form.unit_price.label(class="form-label") }}
+                    {{ form.unit_price(class="form-control", placeholder="0.00") }}
+                    {% if form.unit_price.errors %}
+                        <div class="invalid-feedback d-block">{{ form.unit_price.errors[0] }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-md-6 d-flex align-items-end">
+                    <div class="form-check">
+                        {{ form.active_status(class="form-check-input") }}
+                        {{ form.active_status.label(class="form-check-label") }}
+                    </div>
+                </div>
+                <div class="col-12">
+                    {{ form.submit(class="btn btn-primary") }}
+                    <a href="{{ url_for('admin.service_list') }}" class="btn btn-outline-secondary">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

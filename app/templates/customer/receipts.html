@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Receipts - City Printers{% endblock %}
+{% block sidebar %}
+{% if session.get('customer_portal') %}
+{% include 'customer/_sidebar.html' %}
+{% endif %}
+{% endblock %}
+{% block content %}
+<h2 class="mb-4">My Receipts</h2>
+<div class="card">
+    <div class="card-body p-0">
+        {% if receipts_list %}
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Receipt #</th>
+                        <th>Order #</th>
+                        <th>Date</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for rec in receipts_list %}
+                    <tr>
+                        <td>{{ rec.receipt_number }}</td>
+                        <td>{{ rec.order_id }}</td>
+                        <td>{{ rec.generated_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>R {{ "%.2f"|format(rec.order.total_amount|float) }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="text-muted p-4 mb-0">You have no receipts yet. Receipts are generated after payment at the shop.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

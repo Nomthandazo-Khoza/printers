@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}New Order - City Printers CRM{% endblock %}
+{% block content %}
+<h2 class="mb-4">Create Service Order</h2>
+
+<div class="card">
+    <div class="card-body">
+        <form method="post" action="{{ url_for('cashier.order_create') }}" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="mb-4">
+                <label class="form-label fw-bold">Customer</label>
+                {{ form.customer_id(class="form-select form-select-lg") }}
+                {% if form.customer_id.errors %}
+                    <div class="invalid-feedback d-block">{{ form.customer_id.errors[0] }}</div>
+                {% endif %}
+            </div>
+
+            <label class="form-label fw-bold">Order Items</label>
+            <p class="text-muted small">Add at least one service. Leave service blank to skip a row.</p>
+            <div class="table-responsive">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Service</th>
+                            <th style="width: 120px;">Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in form.items %}
+                        <tr>
+                            <td>
+                                {{ item.service_id(class="form-select") }}
+                                {% if item.service_id.errors %}
+                                    <div class="invalid-feedback d-block">{{ item.service_id.errors[0] }}</div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {{ item.quantity(class="form-control", type="number", min="1") }}
+                                {% if item.quantity.errors %}
+                                    <div class="invalid-feedback d-block">{{ item.quantity.errors[0] }}</div>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% if form.items.errors %}
+                <div class="text-danger small">{{ form.items.errors[0] }}</div>
+            {% endif %}
+
+            <div class="mt-3">
+                {{ form.submit(class="btn btn-primary") }}
+                <a href="{{ url_for('cashier.order_list') }}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

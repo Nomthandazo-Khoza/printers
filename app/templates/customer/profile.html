@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Profile - City Printers{% endblock %}
+{% block sidebar %}
+{% if session.get('customer_portal') %}
+{% include 'customer/_sidebar.html' %}
+{% endif %}
+{% endblock %}
+{% block content %}
+<h2 class="mb-4">My Profile</h2>
+<div class="card">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">Account Details</h5>
+    </div>
+    <div class="card-body">
+        <table class="table table-borderless mb-0">
+            <tr><th class="text-muted" style="width: 30%;">Name</th><td>{{ customer.full_name }}</td></tr>
+            <tr><th class="text-muted">Email</th><td>{{ customer.email }}</td></tr>
+            <tr><th class="text-muted">Phone</th><td>{{ customer.phone_number or '-' }}</td></tr>
+            <tr><th class="text-muted">Address</th><td>{{ customer.address or '-' }}</td></tr>
+            <tr><th class="text-muted">Member since</th><td>{{ customer.created_at.strftime('%Y-%m-%d') }}</td></tr>
+        </table>
+        <p class="text-muted small mt-3 mb-0">To update your details, please visit our shop.</p>
+    </div>
+</div>
+{% endblock %}

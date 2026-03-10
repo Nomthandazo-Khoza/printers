@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Customer Registration - City Printers{% endblock %}
+{% block sidebar %}{% endblock %}
+{% block body %}
+<div class="min-vh-100 py-5 bg-light">
+    <div class="container" style="max-width: 500px;">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h4 class="card-title text-center mb-4">Customer Registration</h4>
+                <p class="text-center text-muted small">Create an account to place and track service requests</p>
+                <form method="post" action="{{ url_for('auth.customer_register') }}" novalidate>
+                    {{ form.hidden_tag() }}
+                    <div class="row g-2">
+                        <div class="col-6">
+                            {{ form.first_name.label(class="form-label") }}
+                            {{ form.first_name(class="form-control", placeholder="First name") }}
+                            {% if form.first_name.errors %}
+                                <div class="invalid-feedback d-block">{{ form.first_name.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-6">
+                            {{ form.last_name.label(class="form-label") }}
+                            {{ form.last_name(class="form-control", placeholder="Last name") }}
+                            {% if form.last_name.errors %}
+                                <div class="invalid-feedback d-block">{{ form.last_name.errors[0] }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="mb-3 mt-2">
+                        {{ form.email.label(class="form-label") }}
+                        {{ form.email(class="form-control", type="email", placeholder="you@example.com") }}
+                        {% if form.email.errors %}
+                            <div class="invalid-feedback d-block">{{ form.email.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.phone_number.label(class="form-label") }}
+                        {{ form.phone_number(class="form-control", placeholder="Phone") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.address.label(class="form-label") }}
+                        {{ form.address(class="form-control", placeholder="Address") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.password.label(class="form-label") }}
+                        {{ form.password(class="form-control", placeholder="Min 6 characters") }}
+                        {% if form.password.errors %}
+                            <div class="invalid-feedback d-block">{{ form.password.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.password_confirm.label(class="form-label") }}
+                        {{ form.password_confirm(class="form-control", placeholder="Confirm password") }}
+                        {% if form.password_confirm.errors %}
+                            <div class="invalid-feedback d-block">{{ form.password_confirm.errors[0] }}</div>
+                        {% endif %}
+                    </div>
+                    {{ form.submit(class="btn btn-primary w-100") }}
+                </form>
+                <hr>
+                <p class="text-center small mb-0">
+                    Already have an account? <a href="{{ url_for('auth.customer_login') }}">Login</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
