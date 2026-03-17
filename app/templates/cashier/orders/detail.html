@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from '_status_badge.html' import order_status_badge, payment_status_badge, payment_option_badge, payment_method_badge %}
 {% block title %}Order #{{ order.id }} - City Printers CRM{% endblock %}
 {% block content %}
 <nav aria-label="breadcrumb" class="mb-3">
@@ -30,14 +31,14 @@
             <div class="card-body">
                 <table class="table table-borderless mb-0 small">
                     <tr><th class="text-muted" style="width: 40%;">Date</th><td>{{ order.order_date.strftime('%Y-%m-%d') }}</td></tr>
-                    <tr><th class="text-muted">Status</th><td><span class="badge bg-secondary">{{ order.order_status }}</span></td></tr>
+                    <tr><th class="text-muted">Order status</th><td>{{ order_status_badge(order.order_status) }}</td></tr>
+                    <tr><th class="text-muted">Payment option</th><td>{{ payment_option_badge(order.payment_option) }}</td></tr>
                     <tr><th class="text-muted">Payment</th>
                         <td>
+                            {{ payment_status_badge(order.payment_status) }}
                             {% if order.payment %}
-                                <span class="badge bg-success">Paid</span>
-                                <span class="ms-1">R {{ "%.2f"|format(order.payment.amount_paid|float) }} ({{ order.payment.payment_method }})</span>
-                            {% else %}
-                                <span class="badge bg-warning text-dark">Unpaid</span>
+                                <span class="ms-1">R {{ "%.2f"|format(order.payment.amount_paid|float) }}</span>
+                                {{ payment_method_badge(order.payment_method or order.payment.payment_method) }}
                             {% endif %}
                         </td>
                     </tr>
@@ -46,7 +47,7 @@
                 <div class="mt-2">
                     {% if order.payment %}
                         <a href="{{ url_for('cashier.order_receipt', order_id=order.id) }}" class="btn btn-sm btn-outline-primary">View Receipt</a>
-                    {% else %}
+                    {% elif order.payment_option == 'pay_later_counter' or order.payment_option == 'pay_later' %}
                         <a href="{{ url_for('cashier.order_payment', order_id=order.id) }}" class="btn btn-sm btn-primary">Record Payment</a>
                     {% endif %}
                 </div>

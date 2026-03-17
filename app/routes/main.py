@@ -13,10 +13,8 @@ def index():
     Root URL. Redirect to dashboard based on role, or to login.
     """
     if current_user.is_authenticated:
-        if current_user.is_admin:
+        if current_user.is_admin or current_user.is_cashier:
             return redirect(url_for('admin.dashboard'))
-        if current_user.is_cashier:
-            return redirect(url_for('cashier.dashboard'))
     # Check if customer is in session (portal)
     from flask import session
     if session.get('customer_id'):

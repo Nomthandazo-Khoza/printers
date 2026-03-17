@@ -1,24 +1,24 @@
 {% extends "base.html" %}
-{% block title %}Staff Login - City Printers CRM{% endblock %}
+{% block title %}Sign in - City Printers CRM{% endblock %}
 {% block sidebar %}{% endblock %}
 {% block body %}
 <div class="min-vh-100 d-flex align-items-center justify-content-center bg-light">
     <div class="card shadow-sm" style="width: 100%; max-width: 400px;">
         <div class="card-body p-4">
-            <h4 class="card-title text-center mb-4">City Printers CRM</h4>
-            <p class="text-center text-muted small">Staff Login</p>
+            <h4 class="card-title text-center mb-1">City Printers CRM</h4>
+            <p class="text-center text-muted small mb-4">Sign in to your account</p>
             <form method="post" action="{{ url_for('auth.login') }}" novalidate>
                 {{ form.hidden_tag() }}
                 <div class="mb-3">
                     {{ form.email.label(class="form-label") }}
-                    {{ form.email(class="form-control", type="email", placeholder="you@example.com") }}
+                    {{ form.email(class="form-control", type="email", placeholder="you@example.com", autocomplete="email") }}
                     {% if form.email.errors %}
                         <div class="invalid-feedback d-block">{{ form.email.errors[0] }}</div>
                     {% endif %}
                 </div>
                 <div class="mb-3">
                     {{ form.password.label(class="form-label") }}
-                    {{ form.password(class="form-control", placeholder="Password") }}
+                    {{ form.password(class="form-control", placeholder="Password", autocomplete="current-password") }}
                     {% if form.password.errors %}
                         <div class="invalid-feedback d-block">{{ form.password.errors[0] }}</div>
                     {% endif %}
@@ -29,11 +29,6 @@
                 </div>
                 {{ form.submit(class="btn btn-primary w-100") }}
             </form>
-            <hr>
-            <p class="text-center small mb-0">
-                <a href="{{ url_for('auth.customer_login') }}">Customer login</a> &middot;
-                <a href="{{ url_for('auth.customer_register') }}">Register as customer</a>
-            </p>
         </div>
     </div>
 </div>

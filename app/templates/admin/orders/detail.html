@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from '_status_badge.html' import order_status_badge, payment_status_badge, payment_option_badge, payment_method_badge %}
 {% block title %}Order #{{ order.id }} - Admin - City Printers CRM{% endblock %}
 {% block content %}
 <nav aria-label="breadcrumb" class="mb-3">
@@ -30,24 +31,66 @@
             <div class="card-body">
                 <table class="table table-borderless mb-0 small">
                     <tr><th class="text-muted" style="width: 40%;">Date</th><td>{{ order.order_date.strftime('%Y-%m-%d') }}</td></tr>
-                    <tr><th class="text-muted">Status</th><td><span class="badge bg-secondary">{{ order.order_status }}</span></td></tr>
+                    <tr><th class="text-muted">Order status</th><td>{{ order_status_badge(order.order_status) }}</td></tr>
+                    <tr><th class="text-muted">Payment option</th><td>{{ payment_option_badge(order.payment_option) }}</td></tr>
+                    <tr><th class="text-muted">Payment status</th><td>{{ payment_status_badge(order.payment_status) }}</td></tr>
                     <tr><th class="text-muted">Payment</th>
                         <td>
                             {% if order.payment %}
-                                <span class="badge bg-success">Paid</span>
-                                <span class="ms-1">R {{ "%.2f"|format(order.payment.amount_paid|float) }} ({{ order.payment.payment_method }})</span>
+                                <span class="text-success">R {{ "%.2f"|format(order.payment.amount_paid|float) }}</span>
+                                {{ payment_method_badge(order.payment_method or order.payment.payment_method) }}
                             {% else %}
-                                <span class="badge bg-warning text-dark">Unpaid</span>
+                                <span class="text-muted">—</span>
                             {% endif %}
                         </td>
                     </tr>
-                    <tr><th class="text-muted">Created by</th><td>{{ order.created_by_user.full_name if order.created_by_user else '-' }}</td></tr>
+                    <tr><th class="text-muted">Created by</th><td>{{ order.created_by_user.full_name if order.created_by_user else 'Customer (online)' }}</td></tr>
+                    {% if order.notes %}
+                    <tr><th class="text-muted">Notes</th><td>{{ order.notes }}</td></tr>
+                    {% endif %}
                 </table>
+                {% if (order.payment_option == 'pay_now_online' or order.payment_option == 'pay_now') and order.payment_status != 'paid' and order.order_status == 'submitted' %}
+                <p class="small text-warning mb-0 mt-2">Customer chose Pay Now. They must pay online before you can start the job.</p>
+                {% endif %}
                 {% if order.payment and order.receipt %}
                 <div class="mt-2">
                     <a href="{{ url_for('admin.order_receipt', order_id=order.id) }}" class="btn btn-sm btn-outline-primary">View Receipt</a>
                 </div>
                 {% endif %}
+
+                <div class="mt-3">
+                    {% if 'start_job' in order.get_allowed_order_actions() %}
+                    <form method="POST" action="{{ url_for('admin.order_workflow_action', order_id=order.id) }}" class="d-inline">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="action" value="start_job">
+                        <button type="submit" class="btn btn-sm btn-primary me-1">Start Job</button>
+                    </form>
+                    {% endif %}
+                    {% if 'mark_job_complete' in order.get_allowed_order_actions() %}
+                    <form method="POST" action="{{ url_for('admin.order_workflow_action', order_id=order.id) }}" class="d-inline">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="action" value="mark_job_complete">
+                        <button type="submit" class="btn btn-sm btn-primary me-1">Mark Job Complete</button>
+                    </form>
+                    {% endif %}
+                    {% if 'confirm_payment' in order.get_allowed_order_actions() %}
+                    <a href="{{ url_for('admin.order_confirm_payment', order_id=order.id) }}" class="btn btn-sm btn-success me-1">Confirm Payment</a>
+                    {% endif %}
+                    {% if 'ready_for_collection' in order.get_allowed_order_actions() %}
+                    <form method="POST" action="{{ url_for('admin.order_workflow_action', order_id=order.id) }}" class="d-inline">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="action" value="ready_for_collection">
+                        <button type="submit" class="btn btn-sm btn-primary me-1">Mark Ready for Collection</button>
+                    </form>
+                    {% endif %}
+                    {% if 'mark_collected' in order.get_allowed_order_actions() %}
+                    <form method="POST" action="{{ url_for('admin.order_workflow_action', order_id=order.id) }}" class="d-inline">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="action" value="mark_collected">
+                        <button type="submit" class="btn btn-sm btn-primary">Mark Collected</button>
+                    </form>
+                    {% endif %}
+                </div>
             </div>
         </div>
     </div>
@@ -87,6 +130,24 @@
         </div>
     </div>
 </div>
+
+{% if order.files.count() > 0 %}
+<div class="card mb-4">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">Uploaded documents</h5>
+    </div>
+    <div class="card-body">
+        <ul class="list-group list-group-flush">
+            {% for of in order.files %}
+            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                <span>{{ of.original_filename }}</span>
+                <a href="{{ url_for('admin.order_file_download', order_id=order.id, file_id=of.id) }}" class="btn btn-sm btn-outline-primary">Download</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
 
 <a href="{{ url_for('admin.order_list') }}" class="btn btn-outline-secondary">Back to Orders</a>
 {% endblock %}

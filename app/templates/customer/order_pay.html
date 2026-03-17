@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Pay for Order #{{ order.id }} - City Printers{% endblock %}
+{% block sidebar %}
+{% if session.get('customer_portal') %}
+{% include 'customer/_sidebar.html' %}
+{% endif %}
+{% endblock %}
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{{ url_for('customer_portal.my_orders') }}">My Orders</a></li>
+        <li class="breadcrumb-item"><a href="{{ url_for('customer_portal.order_detail', order_id=order.id) }}">Order #{{ order.id }}</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Pay online</li>
+    </ol>
+</nav>
+
+<h2 class="mb-4">Pay for Order #{{ order.id }}</h2>
+
+<div class="card mb-4">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">Order total</h5>
+    </div>
+    <div class="card-body">
+        <p class="mb-0 fs-4">R {{ "%.2f"|format(order.total_amount|float) }}</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">Card payment (demo)</h5>
+    </div>
+    <div class="card-body">
+        <p class="text-muted small mb-3">Enter card details to pay now. This is a mock form for demonstration.</p>
+        <form method="POST" action="{{ url_for('customer_portal.order_pay', order_id=order.id) }}" novalidate>
+            {{ form.hidden_tag() }}
+            <div class="mb-3">
+                {{ form.card_number.label(class="form-label") }}
+                {{ form.card_number(class="form-control", placeholder="1234 5678 9012 3456", maxlength="19") }}
+                {% if form.card_number.errors %}
+                    <div class="invalid-feedback d-block">{{ form.card_number.errors[0] }}</div>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                {{ form.card_name.label(class="form-label") }}
+                {{ form.card_name(class="form-control", placeholder="Name on card") }}
+                {% if form.card_name.errors %}
+                    <div class="invalid-feedback d-block">{{ form.card_name.errors[0] }}</div>
+                {% endif %}
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    {{ form.expiry.label(class="form-label") }}
+                    {{ form.expiry(class="form-control", placeholder="MM/YY") }}
+                    {% if form.expiry.errors %}
+                        <div class="invalid-feedback d-block">{{ form.expiry.errors[0] }}</div>
+                    {% endif %}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form.cvv.label(class="form-label") }}
+                    {{ form.cvv(class="form-control", placeholder="123") }}
+                    {% if form.cvv.errors %}
+                        <div class="invalid-feedback d-block">{{ form.cvv.errors[0] }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                {{ form.submit(class="btn btn-primary") }}
+                <a href="{{ url_for('customer_portal.order_detail', order_id=order.id) }}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

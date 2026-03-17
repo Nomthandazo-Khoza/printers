@@ -1,0 +1,56 @@
+{# Order status: submitted, in_progress, ready_for_collection, completed, rejected #}
+{% macro order_status_badge(status) %}
+{% if status == 'submitted' %}
+<span class="badge bg-secondary">Submitted</span>
+{% elif status == 'in_progress' %}
+<span class="badge bg-primary">In progress</span>
+{% elif status == 'ready_for_collection' %}
+<span class="badge bg-info text-dark">Ready for collection</span>
+{% elif status == 'completed' %}
+<span class="badge bg-success">Completed</span>
+{% elif status == 'rejected' %}
+<span class="badge bg-danger">Rejected</span>
+{% else %}
+<span class="badge bg-secondary">{{ status or '-' }}</span>
+{% endif %}
+{% endmacro %}
+
+{# Payment status: unpaid, pending_payment, paid #}
+{% macro payment_status_badge(status) %}
+{% if status == 'unpaid' %}
+<span class="badge bg-warning text-dark">Unpaid</span>
+{% elif status == 'pending_payment' %}
+<span class="badge bg-info text-dark">Awaiting payment</span>
+{% elif status == 'paid' %}
+<span class="badge bg-success">Paid</span>
+{% else %}
+<span class="badge bg-secondary">{{ status or '-' }}</span>
+{% endif %}
+{% endmacro %}
+
+{# Payment option: pay_now_online, pay_later_counter #}
+{% macro payment_option_badge(option) %}
+{% if option == 'pay_now_online' or option == 'pay_now' %}
+<span class="badge bg-primary">Pay now</span>
+{% elif option == 'pay_later_counter' or option == 'pay_later' %}
+<span class="badge bg-secondary">Pay after order is done</span>
+{% else %}
+<span class="badge bg-secondary">{{ option or '-' }}</span>
+{% endif %}
+{% endmacro %}
+
+{# Payment method: card, counter #}
+{% macro payment_method_badge(method) %}
+{% if method == 'card' %}
+<span class="badge bg-primary">Card</span>
+{% elif method == 'counter' %}
+<span class="badge bg-info text-dark">Counter</span>
+{% else %}
+<span class="badge bg-secondary">{{ method or '-' }}</span>
+{% endif %}
+{% endmacro %}
+
+{# Legacy single status_badge for order_status (backwards compatibility) #}
+{% macro status_badge(status) %}
+{{ order_status_badge(status) }}
+{% endmacro %}

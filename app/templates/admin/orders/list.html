@@ -1,11 +1,12 @@
 {% extends "base.html" %}
+{% from '_status_badge.html' import order_status_badge, payment_status_badge, payment_option_badge %}
 {% block title %}Orders - Admin - City Printers CRM{% endblock %}
 {% block content %}
 <h2 class="mb-4">Service Orders</h2>
 
 <div class="card">
     <div class="card-header bg-white">
-        <h5 class="mb-0">All Orders (view only)</h5>
+        <h5 class="mb-0">All Orders</h5>
     </div>
     <div class="card-body p-0">
         {% if orders %}
@@ -17,7 +18,9 @@
                         <th>Customer</th>
                         <th>Date</th>
                         <th>Total</th>
-                        <th>Status</th>
+                        <th>Option</th>
+                        <th>Order status</th>
+                        <th>Payment</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -28,7 +31,9 @@
                         <td>{{ order.customer.full_name }}</td>
                         <td>{{ order.order_date.strftime('%Y-%m-%d') }}</td>
                         <td>R {{ "%.2f"|format(order.total_amount|float) }}</td>
-                        <td><span class="badge bg-secondary">{{ order.order_status }}</span></td>
+                        <td>{{ payment_option_badge(order.payment_option) }}</td>
+                        <td>{{ order_status_badge(order.order_status) }}</td>
+                        <td>{{ payment_status_badge(order.payment_status) }}</td>
                         <td class="text-end">
                             <a href="{{ url_for('admin.order_detail', order_id=order.id) }}" class="btn btn-sm btn-outline-primary">View</a>
                         </td>

@@ -1,2 +1,46 @@
-/* City Printers CRM - Custom styles */
-/* Add project-specific overrides here */
+/* City Printers CRM - Light blue theme */
+
+/* Layout: flexbox wrapper contains sidebar + main. Main must not have margin-left
+   or it creates a gap (sidebar width is already reserved by flex). */
+.main-content {
+    margin-left: 0 !important;
+}
+
+:root {
+    --light-blue-bg: #e8f4fc;
+    --light-blue-sidebar: #b8d9ed;
+    --blue-navbar: #4a90b5;
+    --blue-accent: #2980b9;
+}
+
+/* Primary buttons use theme blue */
+.btn-primary {
+    background-color: var(--blue-accent);
+    border-color: var(--blue-accent);
+}
+.btn-primary:hover {
+    background-color: #21618c;
+    border-color: #21618c;
+}
+
+/* Auth / standalone pages: light blue background */
+.bg-light {
+    background-color: var(--light-blue-bg) !important;
+}
+
+/* Card headers subtle blue tint */
+.card-header.bg-white {
+    background-color: #f8fbfd !important;
+}
+
+/* Table header light blue tint */
+.table-light {
+    background-color: #e8f4fc !important;
+}
+
+/* Alert info uses soft blue */
+.alert-info {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    color: #0c5460;
+}

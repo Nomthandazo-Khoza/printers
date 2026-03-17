@@ -7,9 +7,182 @@
 {% endblock %}
 {% block content %}
 <h2 class="mb-4">Place Service Request</h2>
+
+<p class="text-muted mb-4">For each document, upload a file and choose the service and quantity. Add as many documents as you need.</p>
+
 <div class="card">
     <div class="card-body">
-        <p class="mb-0">To place a printing service request (e.g. printing, photocopying, scanning, laminating, binding), please visit our shop or contact us. Staff will create your order and you can track it under <strong>My Orders</strong> and collect your receipt once payment is complete.</p>
+        <form method="POST" action="{{ url_for('customer_portal.place_request') }}" enctype="multipart/form-data" novalidate id="place-request-form">
+            {{ form.hidden_tag() }}
+
+            {% if form.errors %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {% if 'csrf_token' in form.errors %}
+                    <p class="mb-0">Your session may have expired. Please reload the page and submit again.</p>
+                {% else %}
+                    <p class="mb-0">Please correct the errors below and try again.</p>
+                {% endif %}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
+
+            <div id="document-rows">
+                <div class="document-row card mb-3 border">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Upload file</label>
+                                <input type="file" class="form-control document-file" name="document_file[]" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png">
+                                <div class="file-name small text-muted mt-1"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Service</label>
+                                <select class="form-select" name="service_id[]">
+                                    {% for value, label in service_choices %}
+                                    <option value="{{ value }}">{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-semibold">Quantity</label>
+                                <input type="number" class="form-control" name="quantity[]" min="1" value="1">
+                            </div>
+                            <div class="col-md-3 d-flex align-items-end">
+                                <button type="button" class="btn btn-outline-danger btn-sm remove-row" aria-label="Remove document">Remove</button>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Notes <span class="text-muted fw-normal">(optional)</span></label>
+                                <textarea class="form-control form-control-sm" name="item_notes[]" rows="2" placeholder="Instructions for this document..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <button type="button" class="btn btn-outline-secondary btn-sm" id="add-document">Add Another Document</button>
+            </div>
+
+            <hr class="my-4">
+
+            <div class="mb-4">
+                <label class="form-label fw-bold">Payment option</label>
+                <p class="text-muted small">Choose when you would like to pay.</p>
+                <div class="border rounded p-3 bg-light">
+                    {% for subfield in form.payment_option %}
+                    <div class="form-check">
+                        {{ subfield(class="form-check-input") }}
+                        <label class="form-check-label" for="{{ subfield.id }}">{{ subfield.label.text }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if form.payment_option.errors %}
+                    <div class="invalid-feedback d-block">{{ form.payment_option.errors[0] }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label fw-bold">General instructions <span class="text-muted fw-normal">(optional)</span></label>
+                {{ form.notes(class="form-control", rows=3, placeholder="Any overall instructions for your request...") }}
+                {% if form.notes.errors %}
+                    <div class="invalid-feedback d-block">{{ form.notes.errors[0] }}</div>
+                {% endif %}
+            </div>
+
+            <div class="d-flex gap-2">
+                {{ form.submit(class="btn btn-primary") }}
+                <a href="{{ url_for('customer_portal.dashboard') }}" class="btn btn-outline-secondary">Cancel</a>
+            </div>
+        </form>
     </div>
 </div>
+
+<script>
+(function() {
+    var accept = '.pdf,.doc,.docx,.jpg,.jpeg,.png';
+    var serviceOptions = {{ (service_choices or [])|tojson }};
+
+    function escapeHtml(s) {
+        if (!s) return '';
+        var div = document.createElement('div');
+        div.textContent = s;
+        return div.innerHTML;
+    }
+
+    function getRowTemplate() {
+        var optionsHtml = '';
+        for (var i = 0; i < serviceOptions.length; i++) {
+            var opt = serviceOptions[i];
+            var val = (opt[0] !== undefined && opt[0] !== null) ? String(opt[0]) : '';
+            var label = escapeHtml(opt[1] || '');
+            optionsHtml += '<option value="' + escapeHtml(val) + '">' + label + '</option>';
+        }
+        return (
+            '<div class="document-row card mb-3 border">' +
+            '  <div class="card-body">' +
+            '    <div class="row g-3">' +
+            '      <div class="col-12">' +
+            '        <label class="form-label fw-semibold">Upload file</label>' +
+            '        <input type="file" class="form-control document-file" name="document_file[]" accept="' + accept + '">' +
+            '        <div class="file-name small text-muted mt-1"></div>' +
+            '      </div>' +
+            '      <div class="col-md-6">' +
+            '        <label class="form-label fw-semibold">Service</label>' +
+            '        <select class="form-select" name="service_id[]">' + optionsHtml + '</select>' +
+            '      </div>' +
+            '      <div class="col-md-3">' +
+            '        <label class="form-label fw-semibold">Quantity</label>' +
+            '        <input type="number" class="form-control" name="quantity[]" min="1" value="1">' +
+            '      </div>' +
+            '      <div class="col-md-3 d-flex align-items-end">' +
+            '        <button type="button" class="btn btn-outline-danger btn-sm remove-row" aria-label="Remove document">Remove</button>' +
+            '      </div>' +
+            '      <div class="col-12">' +
+            '        <label class="form-label fw-semibold">Notes <span class="text-muted fw-normal">(optional)</span></label>' +
+            '        <textarea class="form-control form-control-sm" name="item_notes[]" rows="2" placeholder="Instructions for this document..."></textarea>' +
+            '      </div>' +
+            '    </div>' +
+            '  </div>' +
+            '</div>'
+        );
+    }
+
+    function bindFileLabel(row) {
+        var input = row.querySelector('.document-file');
+        var label = row.querySelector('.file-name');
+        if (!input || !label) return;
+        function updateLabel() {
+            var name = input.files && input.files[0] ? input.files[0].name : '';
+            label.textContent = name || '';
+        }
+        input.addEventListener('change', updateLabel);
+        updateLabel();
+    }
+
+    function bindRemove(row) {
+        var btn = row.querySelector('.remove-row');
+        if (!btn) return;
+        btn.addEventListener('click', function() {
+            var rows = document.querySelectorAll('#document-rows .document-row');
+            if (rows.length <= 1) return;
+            row.remove();
+        });
+    }
+
+    document.getElementById('add-document').addEventListener('click', function() {
+        var container = document.getElementById('document-rows');
+        var div = document.createElement('div');
+        div.innerHTML = getRowTemplate();
+        var newRow = div.firstElementChild;
+        container.appendChild(newRow);
+        bindFileLabel(newRow);
+        bindRemove(newRow);
+    });
+
+    document.querySelectorAll('#document-rows .document-row').forEach(function(row) {
+        bindFileLabel(row);
+        bindRemove(row);
+    });
+})();
+</script>
 {% endblock %}

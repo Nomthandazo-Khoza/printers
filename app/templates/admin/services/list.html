@@ -38,7 +38,8 @@
                         </td>
                         <td class="text-end">
                             <a href="{{ url_for('admin.service_edit', service_id=s.id) }}" class="btn btn-sm btn-outline-primary">Edit</a>
-                            <form method="post" action="{{ url_for('admin.service_toggle_status', service_id=s.id) }}" class="d-inline">
+                            <form method="POST" action="{{ url_for('admin.service_toggle_status', service_id=s.id) }}" class="d-inline">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                                 <button type="submit" class="btn btn-sm btn-outline-warning">
                                     {{ 'Deactivate' if s.active_status else 'Activate' }}
                                 </button>

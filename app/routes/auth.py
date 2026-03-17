@@ -1,54 +1,77 @@
 """
-Authentication blueprint: staff login, customer login, customer registration.
+Authentication blueprint: unified login, customer registration, logout.
+All users (staff and customers) sign in at one login page; redirect by role after success.
 """
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, session
 from flask_login import login_user, logout_user, current_user
 from app import db
 from app.models.user import User
 from app.models.customer import Customer
-from app.forms.auth_forms import StaffLoginForm, CustomerLoginForm, CustomerRegistrationForm
+from app.forms.auth_forms import LoginForm, CustomerRegistrationForm
 
 auth_bp = Blueprint('auth', __name__)
+
+
+def get_dashboard_url_for_user():
+    """
+    Return the dashboard URL for the currently logged-in user (staff or customer).
+    Staff (admin or cashier): admin.dashboard. Customer: customer_portal.dashboard.
+    """
+    if current_user.is_authenticated:
+        if current_user.is_admin or current_user.is_cashier:
+            return url_for('admin.dashboard')
+    if session.get('customer_id'):
+        return url_for('customer_portal.dashboard')
+    return None
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     """
-    Staff login page. Admin and Cashier log in here.
-    Redirects to appropriate dashboard after login.
+    Unified login for all users (staff and customers).
+    Authenticate by email + password; try User (staff) first, then Customer.
+    Redirect to the correct dashboard based on role.
     """
     if current_user.is_authenticated:
-        if current_user.is_admin:
-            return redirect(url_for('admin.dashboard'))
-        return redirect(url_for('cashier.dashboard'))
+        return redirect(get_dashboard_url_for_user())
+    if session.get('customer_id'):
+        next_url = request.args.get('next') or url_for('customer_portal.dashboard')
+        return redirect(next_url)
 
-    form = StaffLoginForm()
+    form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(email=form.email.data.strip().lower()).first()
-        if user is None or not user.check_password(form.password.data):
-            flash('Invalid email or password.', 'danger')
-            return render_template('auth/login.html', form=form)
-
-        login_user(user, remember=form.remember_me.data)
+        email = form.email.data.strip().lower()
+        password = form.password.data
         next_page = request.args.get('next')
-        if next_page:
-            return redirect(next_page)
-        if user.is_admin:
-            return redirect(url_for('admin.dashboard'))
-        return redirect(url_for('cashier.dashboard'))
+
+        user = User.query.filter_by(email=email).first()
+        if user and user.check_password(password):
+            login_user(user, remember=form.remember_me.data)
+            if next_page:
+                return redirect(next_page)
+            return redirect(get_dashboard_url_for_user())
+
+        customer = Customer.query.filter_by(email=email).first()
+        if customer and customer.check_password(password):
+            session['customer_id'] = customer.id
+            session['customer_portal'] = True
+            if next_page:
+                return redirect(next_page)
+            return redirect(url_for('customer_portal.dashboard'))
+
+        flash('Invalid email or password.', 'danger')
+        return render_template('auth/login.html', form=form)
 
     return render_template('auth/login.html', form=form)
 
 
 @auth_bp.route('/logout', methods=['GET', 'POST'])
 def logout():
-    """Log out current staff user."""
+    """Log out staff user (Flask-Login)."""
     logout_user()
     flash('You have been logged out.', 'info')
     return redirect(url_for('auth.login'))
 
-
-# --- Customer portal auth (separate from staff) ---
 
 @auth_bp.route('/customer/register', methods=['GET', 'POST'])
 def customer_register():
@@ -58,6 +81,8 @@ def customer_register():
         email = form.email.data.strip().lower()
         if Customer.query.filter_by(email=email).first():
             flash('An account with this email already exists.', 'danger')
+            form.password.data = request.form.get('password') or ''
+            form.password_confirm.data = request.form.get('password_confirm') or ''
             return render_template('auth/customer_register.html', form=form)
 
         customer = Customer(
@@ -71,39 +96,24 @@ def customer_register():
         db.session.add(customer)
         db.session.commit()
         flash('Registration successful. You can now log in.', 'success')
-        return redirect(url_for('auth.customer_login'))
+        return redirect(url_for('auth.login'))
 
+    if request.method == 'POST':
+        form.password.data = request.form.get('password') or ''
+        form.password_confirm.data = request.form.get('password_confirm') or ''
     return render_template('auth/customer_register.html', form=form)
 
 
 @auth_bp.route('/customer/login', methods=['GET', 'POST'])
 def customer_login():
-    """
-    Customer portal login. Uses session to track customer (not Flask-Login User).
-    For Phase 1 we use a simple approach; can be extended with a custom login manager.
-    """
-    form = CustomerLoginForm()
-    if form.validate_on_submit():
-        customer = Customer.query.filter_by(email=form.email.data.strip().lower()).first()
-        if customer is None or not customer.check_password(form.password.data):
-            flash('Invalid email or password.', 'danger')
-            return render_template('auth/customer_login.html', form=form)
-
-        # Store customer id in session for customer portal (separate from staff login)
-        from flask import session
-        session['customer_id'] = customer.id
-        session['customer_portal'] = True
-        next_page = request.args.get('next') or url_for('customer_portal.dashboard')
-        return redirect(next_page)
-
-    return render_template('auth/customer_login.html', form=form)
+    """Redirect to unified login (keeps old links and bookmarks working)."""
+    return redirect(url_for('auth.login'))
 
 
 @auth_bp.route('/customer/logout', methods=['GET', 'POST'])
 def customer_logout():
     """Log out customer from portal."""
-    from flask import session
     session.pop('customer_id', None)
     session.pop('customer_portal', None)
     flash('You have been logged out.', 'info')
-    return redirect(url_for('auth.customer_login'))
+    return redirect(url_for('auth.login'))

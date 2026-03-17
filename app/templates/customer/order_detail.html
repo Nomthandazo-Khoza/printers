@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from '_status_badge.html' import order_status_badge, payment_status_badge, payment_option_badge %}
 {% block title %}Order #{{ order.id }} - City Printers{% endblock %}
 {% block sidebar %}
 {% if session.get('customer_portal') %}
@@ -13,15 +14,67 @@
     </ol>
 </nav>
 <h2 class="mb-4">Order #{{ order.id }}</h2>
+
 <div class="card mb-4">
     <div class="card-header bg-white">
         <h5 class="mb-0">Status</h5>
     </div>
     <div class="card-body">
         <p class="mb-1"><strong>Date:</strong> {{ order.order_date.strftime('%Y-%m-%d') }}</p>
-        <p class="mb-0"><strong>Status:</strong> <span class="badge bg-secondary">{{ order.order_status }}</span></p>
+        <p class="mb-1"><strong>Order status:</strong> {{ order_status_badge(order.order_status) }}</p>
+        <p class="mb-1"><strong>Payment option:</strong> {{ payment_option_badge(order.payment_option) }}</p>
+        <p class="mb-1"><strong>Payment status:</strong> {{ payment_status_badge(order.payment_status) }}</p>
+        <p class="mb-0 mt-2 text-muted">{{ order.get_customer_stage_message() }}</p>
+        {% if (order.payment_option == 'pay_now_online' or order.payment_option == 'pay_now') and order.payment_status != 'paid' %}
+        <a href="{{ url_for('customer_portal.order_pay', order_id=order.id) }}" class="btn btn-sm btn-primary mt-2">Pay online</a>
+        {% endif %}
     </div>
 </div>
+
+{% if order.notifications.count() > 0 %}
+<div class="card mb-4">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">Updates</h5>
+    </div>
+    <div class="card-body">
+        <ul class="list-unstyled mb-0">
+            {% for n in (order.notifications.all()|list)|reverse %}
+            <li class="mb-2">{{ n.message }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+
+{% if order.notes %}
+<div class="card mb-4">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">Your instructions</h5>
+    </div>
+    <div class="card-body">
+        <p class="mb-0 text-muted">{{ order.notes }}</p>
+    </div>
+</div>
+{% endif %}
+
+{% if order.files.count() > 0 %}
+<div class="card mb-4">
+    <div class="card-header bg-white">
+        <h5 class="mb-0">Uploaded documents</h5>
+    </div>
+    <div class="card-body">
+        <ul class="list-group list-group-flush">
+            {% for of in order.files %}
+            <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                <span>{{ of.original_filename }}</span>
+                <a href="{{ url_for('customer_portal.order_file_download', order_id=order.id, file_id=of.id) }}" class="btn btn-sm btn-outline-primary">Download</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+
 <div class="card">
     <div class="card-header bg-white">
         <h5 class="mb-0">Items</h5>

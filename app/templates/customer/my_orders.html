@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from '_status_badge.html' import order_status_badge, payment_status_badge, payment_option_badge %}
 {% block title %}My Orders - City Printers{% endblock %}
 {% block sidebar %}
 {% if session.get('customer_portal') %}
@@ -17,7 +18,10 @@
                         <th>Order #</th>
                         <th>Date</th>
                         <th>Total</th>
-                        <th>Status</th>
+                        <th>Payment option</th>
+                        <th>Order status</th>
+                        <th>Payment</th>
+                        <th>Update</th>
                         <th></th>
                     </tr>
                 </thead>
@@ -27,7 +31,10 @@
                         <td>{{ order.id }}</td>
                         <td>{{ order.order_date.strftime('%Y-%m-%d') }}</td>
                         <td>R {{ "%.2f"|format(order.total_amount|float) }}</td>
-                        <td><span class="badge bg-secondary">{{ order.order_status }}</span></td>
+                        <td>{{ payment_option_badge(order.payment_option) }}</td>
+                        <td>{{ order_status_badge(order.order_status) }}</td>
+                        <td>{{ payment_status_badge(order.payment_status) }}</td>
+                        <td class="text-muted small">{{ order.get_customer_stage_message() }}</td>
                         <td><a href="{{ url_for('customer_portal.order_detail', order_id=order.id) }}" class="btn btn-sm btn-outline-primary">View</a></td>
                     </tr>
                     {% endfor %}

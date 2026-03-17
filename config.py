@@ -10,8 +10,12 @@ load_dotenv()
 
 class Config:
     """Base configuration."""
-    # Flask
+    # Flask (SECRET_KEY required for session and CSRF)
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-secret-key-change-in-production'
+    
+    # CSRF protection (Flask-WTF)
+    WTF_CSRF_ENABLED = True
+    WTF_CSRF_TIME_LIMIT = None  # token valid until session ends (recommended for forms with file upload)
     
     # Database - MySQL (or SQLite if DATABASE_URI not set, for quick local dev)
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URI') or \
@@ -23,9 +27,13 @@ class Config:
         'pool_recycle': 300,
     }
     
-    # Session
+    # Session (ensure cookie is sent with form POSTs)
     SESSION_PROTECTION = 'strong'
     REMEMBER_COOKIE_DURATION = 86400  # 24 hours
+    SESSION_COOKIE_SAMESITE = 'Lax'
+
+    # Uploads (relative to instance folder)
+    UPLOAD_ORDER_FOLDER = 'uploads/orders'
 
 
 class DevelopmentConfig(Config):

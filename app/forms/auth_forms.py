@@ -1,25 +1,22 @@
 """
-Authentication forms: staff login, customer login, customer registration.
+Authentication forms: unified login, customer registration.
 """
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo, Length
 
 
-class StaffLoginForm(FlaskForm):
-    """Staff (Admin/Cashier) login form."""
+class LoginForm(FlaskForm):
+    """Unified login form for staff and customers."""
     email = StringField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember_me = BooleanField('Remember Me', default=False)
     submit = SubmitField('Login')
 
 
-class CustomerLoginForm(FlaskForm):
-    """Customer portal login form."""
-    email = StringField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired()])
-    remember_me = BooleanField('Remember Me', default=False)
-    submit = SubmitField('Login')
+# Backwards compatibility
+StaffLoginForm = LoginForm
+CustomerLoginForm = LoginForm
 
 
 class CustomerRegistrationForm(FlaskForm):

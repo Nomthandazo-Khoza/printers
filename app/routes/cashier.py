@@ -52,7 +52,7 @@ def dashboard():
 
     orders_in_progress = Order.query.filter_by(order_status=Order.STATUS_IN_PROGRESS).count()
     completed = Order.query.filter(
-        Order.order_status.in_([Order.STATUS_COMPLETED, Order.STATUS_COLLECTED])
+        Order.order_status == Order.STATUS_COMPLETED
     ).count()
 
     recent_orders = Order.query.order_by(Order.created_at.desc()).limit(10).all()
@@ -173,7 +173,8 @@ def order_create():
             created_by=current_user.id,
             order_date=date.today(),
             total_amount=Decimal('0.00'),
-            order_status=Order.STATUS_PENDING,
+            order_status=Order.STATUS_SUBMITTED,
+            payment_status=Order.PAYMENT_UNPAID,
         )
         db.session.add(order)
         db.session.flush()  # get order.id
@@ -239,11 +240,12 @@ def _create_receipt_for_order(order):
 @cashier_required
 def order_payment(order_id):
     """
-    Record full payment for an order. One payment per order.
-    If order already has payment, redirect to order detail with warning.
-    On success: create Payment, then create Receipt, redirect to receipt view.
+    Record counter payment for pay_later_counter orders only.
     """
     order = Order.query.get_or_404(order_id)
+    if order.payment_option != Order.PAYMENT_OPTION_PAY_LATER:
+        flash('Only "Pay After Order Is Done" orders can be paid at the counter.', 'warning')
+        return redirect(url_for('cashier.order_detail', order_id=order.id))
     if order.payment:
         flash('This order already has a payment recorded.', 'warning')
         return redirect(url_for('cashier.order_detail', order_id=order.id))
@@ -258,18 +260,16 @@ def order_payment(order_id):
             flash(f'Amount paid must equal order total (R {order.total_amount:.2f}). Partial payment is not allowed.', 'danger')
             return render_template('cashier/orders/payment.html', order=order, form=form)
 
-        payment = Payment(
-            order_id=order.id,
-            amount_paid=amount_submitted,
-            payment_method=form.payment_method.data,
-            recorded_by=current_user.id,
+        from app.services.order_workflow import confirm_payment as workflow_confirm_payment
+        ok, err = workflow_confirm_payment(
+            order, amount_submitted, Order.PAYMENT_METHOD_COUNTER,
+            recorded_by_user_id=current_user.id,
         )
-        db.session.add(payment)
-        db.session.flush()
-        # Generate receipt after payment
-        _create_receipt_for_order(order)
+        if not ok:
+            flash(err or 'Could not record payment.', 'danger')
+            return redirect(url_for('cashier.order_detail', order_id=order.id))
         db.session.commit()
-        flash(f'Payment of R {payment.amount_paid:.2f} recorded. Receipt generated.', 'success')
+        flash(f'Payment of R {amount_submitted:.2f} recorded. Receipt generated.', 'success')
         return redirect(url_for('cashier.order_receipt', order_id=order.id))
 
     return render_template('cashier/orders/payment.html', order=order, form=form)

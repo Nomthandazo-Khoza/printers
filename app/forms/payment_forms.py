@@ -3,17 +3,29 @@ Payment forms for City Printers CRM.
 Full payment only; amount must equal order total (validated in view).
 """
 from flask_wtf import FlaskForm
-from wtforms import SelectField, FloatField, SubmitField
-from wtforms.validators import DataRequired, NumberRange
+from wtforms import SelectField, FloatField, SubmitField, StringField
+from wtforms.validators import DataRequired, NumberRange, Optional, Length
 
 
-# Allowed payment methods (business rule)
+# Counter payment only (pay_later_counter orders)
+COUNTER_PAYMENT_METHOD = 'counter'
+
+# Allowed payment methods for counter (admin/cashier)
 PAYMENT_METHODS = [
     ('Cash', 'Cash'),
     ('Card', 'Card'),
     ('EFT', 'EFT'),
     ('Mobile', 'Mobile'),
 ]
+
+
+class OnlineCardPaymentForm(FlaskForm):
+    """Mock online card payment form (demo)."""
+    card_number = StringField('Card number', validators=[DataRequired(), Length(min=12, max=19)])
+    card_name = StringField('Name on card', validators=[DataRequired(), Length(max=100)])
+    expiry = StringField('Expiry (MM/YY)', validators=[DataRequired(), Length(min=4, max=5)])
+    cvv = StringField('CVV', validators=[DataRequired(), Length(min=3, max=4)])
+    submit = SubmitField('Pay now')
 
 
 class PaymentForm(FlaskForm):
