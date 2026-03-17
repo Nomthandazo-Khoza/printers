@@ -28,6 +28,9 @@
                     {{ form.remember_me.label(class="form-check-label") }}
                 </div>
                 {{ form.submit(class="btn btn-primary w-100") }}
+                <p class="text-center text-muted small mt-3 mb-0">
+                    New here? <a href="{{ url_for('auth.customer_register') }}">Register as a customer</a>
+                </p>
             </form>
         </div>
     </div>

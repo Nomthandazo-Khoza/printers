@@ -49,5 +49,20 @@ def create_app(config_name=None):
     app.register_blueprint(main_bp)
     app.register_blueprint(admin_bp, url_prefix='/admin')
     app.register_blueprint(customer_bp, url_prefix='/customer')
-    
+
+    with app.app_context():
+        from app import models  # noqa: F401 - register all models with db
+        db.create_all()
+        # Seed default admin if missing
+        from app.models.user import User
+        if not User.query.filter_by(email='admin@cityprinters.com').first():
+            admin = User(
+                full_name='Admin User',
+                email='admin@cityprinters.com',
+                role='admin',
+            )
+            admin.set_password('admin123')
+            db.session.add(admin)
+            db.session.commit()
+
     return app
