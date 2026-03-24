@@ -44,3 +44,24 @@
     border-color: #bee5eb;
     color: #0c5460;
 }
+
+/* Public homepage sections */
+.homepage-hero {
+    background: linear-gradient(135deg, #dff1fb 0%, #c8e7f8 100%);
+}
+
+.homepage-soft-bg {
+    background-color: #f4fbff;
+}
+
+.homepage-pill {
+    background-color: #4f93bd;
+}
+
+.homepage-feature-box {
+    background-color: #eef8fd;
+}
+
+.homepage-footer {
+    background-color: #4f93bd;
+}

@@ -75,6 +75,10 @@
                         </ul>
                     </div>
                     <a class="nav-link" href="{{ url_for('auth.customer_logout') }}">Logout</a>
+                {% else %}
+                    <a class="nav-link" href="{{ url_for('main.index') }}">Home</a>
+                    <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                    <a class="nav-link" href="{{ url_for('auth.customer_register') }}">Register</a>
                 {% endif %}
             </div>
         </div>

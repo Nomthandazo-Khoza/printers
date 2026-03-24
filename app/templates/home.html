@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+
+{% block title %}City Printers | Home{% endblock %}
+
+{% block sidebar %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-0">
+    <section class="py-5 homepage-hero">
+        <div class="container py-5">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-6">
+                    <span class="badge rounded-pill px-3 py-2 mb-3 homepage-pill">Professional Printing Services</span>
+                    <h1 class="display-4 fw-bold mb-3 text-dark">Welcome to City Printers</h1>
+                    <p class="lead text-secondary mb-4">
+                        Your trusted partner for high-quality printing services, business cards, flyers, posters,
+                        and custom designs.
+                    </p>
+                    <p class="mb-4 text-muted">
+                        We provide professional printing solutions for businesses, students, and individuals,
+                        with fast service, great quality, and affordable prices.
+                    </p>
+                    <div class="d-flex flex-wrap gap-3">
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg px-4">Login</a>
+                        <a href="{{ url_for('auth.customer_register') }}" class="btn btn-outline-primary btn-lg px-4">Register</a>
+                        <a href="{{ url_for('customer_portal.place_request') }}" class="btn btn-outline-secondary btn-lg px-4">Place Order</a>
+                        <a href="#contact" class="btn btn-outline-primary btn-lg px-4">Contact Us</a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="card border-0 shadow-lg rounded-4">
+                        <div class="card-body p-4">
+                            <h4 class="fw-bold mb-3">Why Choose City Printers?</h4>
+                            <div class="row g-3">
+                                <div class="col-sm-6">
+                                    <div class="p-3 rounded-3 h-100 homepage-feature-box">
+                                        <h6 class="fw-bold mb-2">Fast Service</h6>
+                                        <p class="mb-0 text-muted small">Quick turnaround for urgent and standard jobs.</p>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="p-3 rounded-3 h-100 homepage-feature-box">
+                                        <h6 class="fw-bold mb-2">Professional Quality</h6>
+                                        <p class="mb-0 text-muted small">Sharp, clean, and reliable print results every time.</p>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="p-3 rounded-3 h-100 homepage-feature-box">
+                                        <h6 class="fw-bold mb-2">Affordable Prices</h6>
+                                        <p class="mb-0 text-muted small">Excellent value for students, individuals, and businesses.</p>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="p-3 rounded-3 h-100 homepage-feature-box">
+                                        <h6 class="fw-bold mb-2">Custom Solutions</h6>
+                                        <p class="mb-0 text-muted small">Printing, signage, branding, and design support.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 bg-white" id="about">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">About City Printers</h2>
+                <p class="text-muted mb-0">Reliable printing and document services for every need.</p>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4 p-lg-5">
+                            <p class="mb-3">
+                                City Printers is a modern printing store that offers a wide range of printing services
+                                such as posters, flyers, banners, invitations, and business cards.
+                            </p>
+                            <p class="mb-3">
+                                We also provide digital printing, signage, and branding services for businesses,
+                                students, and individual customers.
+                            </p>
+                            <p class="mb-0">
+                                Our focus is on delivering <strong>fast service</strong>,
+                                <strong>professional quality</strong>, and <strong>affordable prices</strong>.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 homepage-soft-bg" id="services">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Our Services</h2>
+                <p class="text-muted mb-0">We offer a wide range of printing and document solutions.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 col-lg-4"><div class="card h-100 border-0 shadow-sm rounded-4"><div class="card-body p-4"><h5 class="fw-bold">Business Card Printing</h5><p class="text-muted mb-0">Professional business cards for individuals, brands, and companies.</p></div></div></div>
+                <div class="col-md-6 col-lg-4"><div class="card h-100 border-0 shadow-sm rounded-4"><div class="card-body p-4"><h5 class="fw-bold">Poster & Flyer Printing</h5><p class="text-muted mb-0">High-quality posters and flyers for events, promotions, and campaigns.</p></div></div></div>
+                <div class="col-md-6 col-lg-4"><div class="card h-100 border-0 shadow-sm rounded-4"><div class="card-body p-4"><h5 class="fw-bold">Book Binding</h5><p class="text-muted mb-0">Neat and durable binding for reports, projects, and portfolios.</p></div></div></div>
+                <div class="col-md-6 col-lg-4"><div class="card h-100 border-0 shadow-sm rounded-4"><div class="card-body p-4"><h5 class="fw-bold">Photocopying & Scanning</h5><p class="text-muted mb-0">Fast and accurate copying and digital scanning for personal and business use.</p></div></div></div>
+                <div class="col-md-6 col-lg-4"><div class="card h-100 border-0 shadow-sm rounded-4"><div class="card-body p-4"><h5 class="fw-bold">Banner & Signage Printing</h5><p class="text-muted mb-0">Large format prints for branding, advertising, and display purposes.</p></div></div></div>
+                <div class="col-md-6 col-lg-4"><div class="card h-100 border-0 shadow-sm rounded-4"><div class="card-body p-4"><h5 class="fw-bold">Custom Design Services</h5><p class="text-muted mb-0">Creative design support for flyers, invitations, posters, and branded materials.</p></div></div></div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 bg-white" id="hours">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Business Hours</h2>
+                <p class="text-muted mb-0">Visit us during our working hours for quick and reliable service.</p>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4">
+                            <div class="row text-center g-3">
+                                <div class="col-md-4"><div class="p-3 rounded-3 homepage-feature-box"><h6 class="fw-bold mb-2">Monday - Friday</h6><p class="mb-0">08:00 - 17:00</p></div></div>
+                                <div class="col-md-4"><div class="p-3 rounded-3 homepage-feature-box"><h6 class="fw-bold mb-2">Saturday</h6><p class="mb-0">09:00 - 13:00</p></div></div>
+                                <div class="col-md-4"><div class="p-3 rounded-3 homepage-feature-box"><h6 class="fw-bold mb-2">Sunday</h6><p class="mb-0">Closed</p></div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 homepage-soft-bg" id="faq">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Frequently Asked Questions</h2>
+                <p class="text-muted mb-0">Answers to common questions about our services.</p>
+            </div>
+            <div class="accordion" id="faqAccordion">
+                <div class="accordion-item border-0 shadow-sm mb-3 rounded-3 overflow-hidden">
+                    <h2 class="accordion-header"><button class="accordion-button fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faqOne">What services do you offer?</button></h2>
+                    <div id="faqOne" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion"><div class="accordion-body">We offer business card printing, poster and flyer printing, book binding, photocopying, scanning, banner printing, signage printing, and custom design services.</div></div>
+                </div>
+                <div class="accordion-item border-0 shadow-sm mb-3 rounded-3 overflow-hidden">
+                    <h2 class="accordion-header"><button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faqTwo">Can I place my order online?</button></h2>
+                    <div id="faqTwo" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">Yes, you can place a service request through our website. Once submitted, our team will process your order.</div></div>
+                </div>
+                <div class="accordion-item border-0 shadow-sm mb-3 rounded-3 overflow-hidden">
+                    <h2 class="accordion-header"><button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faqThree">How long does printing take?</button></h2>
+                    <div id="faqThree" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">Turnaround time depends on the type and size of your order. Many standard jobs are completed the same day or within 24 hours.</div></div>
+                </div>
+                <div class="accordion-item border-0 shadow-sm mb-3 rounded-3 overflow-hidden">
+                    <h2 class="accordion-header"><button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faqFour">Do you offer bulk printing discounts?</button></h2>
+                    <div id="faqFour" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">Yes, we offer discounted rates for large or bulk printing orders. Contact us for a custom quote.</div></div>
+                </div>
+                <div class="accordion-item border-0 shadow-sm mb-3 rounded-3 overflow-hidden">
+                    <h2 class="accordion-header"><button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faqFive">What file formats do you accept?</button></h2>
+                    <div id="faqFive" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">We accept PDF, DOC, DOCX, JPG, JPEG, and PNG files for printing and document processing.</div></div>
+                </div>
+                <div class="accordion-item border-0 shadow-sm mb-3 rounded-3 overflow-hidden">
+                    <h2 class="accordion-header"><button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faqSix">Do you provide design services?</button></h2>
+                    <div id="faqSix" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">Yes, we provide custom design services for flyers, posters, invitations, business cards, and other branded materials.</div></div>
+                </div>
+                <div class="accordion-item border-0 shadow-sm rounded-3 overflow-hidden">
+                    <h2 class="accordion-header"><button class="accordion-button collapsed fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#faqSeven">What payment methods do you accept?</button></h2>
+                    <div id="faqSeven" class="accordion-collapse collapse" data-bs-parent="#faqAccordion"><div class="accordion-body">We accept cash, card, EFT, and mobile payment options.</div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5 bg-white" id="contact">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="fw-bold">Contact Us</h2>
+                <p class="text-muted mb-0">Get in touch with City Printers for professional and affordable printing solutions.</p>
+            </div>
+            <div class="row g-4 justify-content-center">
+                <div class="col-lg-4"><div class="card h-100 border-0 shadow-sm rounded-4"><div class="card-body p-4"><h5 class="fw-bold mb-3">Physical Address</h5><p class="mb-0 text-muted">45 Smith Street<br>Durban Central<br>KwaZulu-Natal<br>South Africa</p></div></div></div>
+                <div class="col-lg-4"><div class="card h-100 border-0 shadow-sm rounded-4"><div class="card-body p-4"><h5 class="fw-bold mb-3">Contact Details</h5><p class="mb-2"><strong>Telephone:</strong> 031 456 7890</p><p class="mb-2"><strong>Cell / WhatsApp:</strong> 082 345 6789</p><p class="mb-0"><strong>Email:</strong> info@cityprinters.co.za</p></div></div></div>
+                <div class="col-lg-4"><div class="card h-100 border-0 shadow-sm rounded-4"><div class="card-body p-4"><h5 class="fw-bold mb-3">Website</h5><p class="mb-0 text-muted"><a href="https://printers-kc02.onrender.com" target="_blank" class="text-decoration-none">https://printers-kc02.onrender.com</a></p></div></div></div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-4 text-center text-white homepage-footer">
+        <div class="container">
+            <p class="mb-1 fw-semibold">City Printers CRM</p>
+            <p class="mb-0 small">Professional printing solutions for businesses, students, and individuals.</p>
+        </div>
+    </footer>
+</div>
+{% endblock %}
